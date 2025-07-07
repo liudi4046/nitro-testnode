@@ -11,5 +11,9 @@ RUN curl -L https://foundry.paradigm.xyz | bash
 ENV PATH="${PATH}:/root/.foundry/bin"
 RUN foundryup --install 1.0.0
 RUN touch scripts/config.ts
+
+RUN echo '\nsolc_version = "0.8.28+commit.7893614a"' >> foundry.toml
+RUN echo '\nextra_solc_versions = ["0.8.17+commit.8df45f5f"]' >> foundry.toml
+
 RUN yarn build:all
 ENTRYPOINT ["yarn"]
