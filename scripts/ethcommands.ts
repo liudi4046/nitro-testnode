@@ -759,7 +759,7 @@ export const sendRPCCommand = {
     describe: "sends rpc command",
     builder: {
         method: { string: true, describe: "rpc method to call", default: "eth_syncing" },
-        url: { string: true, describe: "url to send rpc call", default: "http://sequencer:8123"},
+        url: { string: true, describe: "url to send rpc call", default: "http://sequencer:8547"},
         params: { array : true, describe: "array of parameter name/values" },
     },
     handler: async (argv: any) => {
@@ -794,7 +794,7 @@ export const waitForSyncCommand = {
   command: "wait-for-sync",
   describe: "wait for rpc to sync",
   builder: {
-    url: { string: true, describe: "url to send rpc call", default: "http://sequencer:8123"},
+    url: { string: true, describe: "url to send rpc call", default: "http://sequencer:8547"},
   },
   handler: async (argv: any) => {
     const rpcProvider = new ethers.providers.JsonRpcProvider(argv.url)

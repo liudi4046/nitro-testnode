@@ -21,7 +21,7 @@ services:
       -  ./blockscout/nitro.env
     environment:
         ETHEREUM_JSONRPC_VARIANT: 'geth'
-        ETHEREUM_JSONRPC_HTTP_URL: http://sequencer:8123/
+        ETHEREUM_JSONRPC_HTTP_URL: http://sequencer:8547/
         INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
         DATABASE_URL: postgresql://postgres:@postgres:5432/blockscout
         ECTO_USE_SSL: "false"
@@ -158,7 +158,7 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8123:8123"
+      - "127.0.0.1:8547:8547"
       - "127.0.0.1:8548:8548"
       - "127.0.0.1:9642:9642"
     volumes:
@@ -171,7 +171,7 @@ services:
       - --node.feed.output.enable
       - --node.feed.output.port=9642
       - --http.api=net,web3,eth,txpool,debug,timeboost,auctioneer
-      - --node.seq-coordinator.my-url=http://sequencer:8123
+      - --node.seq-coordinator.my-url=http://sequencer:8547
       - --graphql.enable
       - --graphql.vhosts=*
       - --graphql.corsdomain=*
@@ -183,14 +183,14 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8647:8123"
+      - "127.0.0.1:8647:8547"
       - "127.0.0.1:8648:8548"
     volumes:
       - "./arb/seqdata_b:/home/user/.arbitrum/local/nitro"
       - "./arb/config:/config"
     command:
       - --conf.file=/config/sequencer_config.json
-      - --node.seq-coordinator.my-url=http://sequencer_b:8123
+      - --node.seq-coordinator.my-url=http://sequencer_b:8547
       - --http.api=net,web3,eth,txpool,debug,timeboost,auctioneer
     depends_on:
       - geth
@@ -201,14 +201,14 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8747:8123"
+      - "127.0.0.1:8747:8547"
       - "127.0.0.1:8748:8548"
     volumes:
       - "./arb/seqdata_c:/home/user/.arbitrum/local/nitro"
       - "./arb/config:/config"
     command:
       - --conf.file=/config/sequencer_config.json
-      - --node.seq-coordinator.my-url=http://sequencer_c:8123
+      - --node.seq-coordinator.my-url=http://sequencer_c:8547
       - --http.api=net,web3,eth,txpool,debug,timeboost,auctioneer
     depends_on:
       - geth
@@ -219,14 +219,14 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8847:8123"
+      - "127.0.0.1:8847:8547"
       - "127.0.0.1:8848:8548"
     volumes:
       - "./arb/seqdata_d:/home/user/.arbitrum/local/nitro"
       - "./arb/config:/config"
     command:
       - --conf.file=/config/sequencer_config.json
-      - --node.seq-coordinator.my-url=http://sequencer_d:8123
+      - --node.seq-coordinator.my-url=http://sequencer_d:8547
       - --http.api=net,web3,eth,txpool,debug,timeboost,auctioneer
     depends_on:
       - geth
@@ -237,7 +237,7 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8047:8123"
+      - "127.0.0.1:8047:8547"
       - "127.0.0.1:8048:8548"
     volumes:
       - "./arb/unsafestaker-data:/home/user/.arbitrum/local/nitro"
@@ -254,7 +254,7 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8147:8123"
+      - "127.0.0.1:8147:8547"
       - "127.0.0.1:8148:8548"
     volumes:
       - "./arb/poster-data:/home/user/.arbitrum/local/nitro"
@@ -270,7 +270,7 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:9147:8123"
+      - "127.0.0.1:9147:8547"
       - "127.0.0.1:9148:8548"
     volumes:
       - "./arb/poster-data-b:/home/user/.arbitrum/local/nitro"
@@ -286,7 +286,7 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:9247:8123"
+      - "127.0.0.1:9247:8547"
       - "127.0.0.1:9248:8548"
     volumes:
       - "./arb/poster-data-c:/home/user/.arbitrum/local/nitro"
@@ -302,13 +302,13 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
-      - "127.0.0.1:8247:8123"
+      - "127.0.0.1:8247:8547"
       - "127.0.0.1:8248:8548"
     volumes:
       - "./arb/validator-data:/home/user/.arbitrum/local/nitro"
       - "./arb/l1keystore:/home/user/l1keystore"
       - "./arb/config:/config"
-    command: --conf.file /config/validator_config.json --http.port 8123 --http.api net,web3,arb,debug --ws.port 8548
+    command: --conf.file /config/validator_config.json --http.port 8547 --http.api net,web3,arb,debug --ws.port 8548
     depends_on:
       - sequencer
       - validation_node
@@ -364,7 +364,7 @@ services:
       args:
         TOKEN_BRIDGE_BRANCH: ${TOKEN_BRIDGE_BRANCH:-}
     environment:
-      - ARB_URL=http://sequencer:8123
+      - ARB_URL=http://sequencer:8547
       - ETH_URL=http://geth:8545
     volumes:
       - "./arb/tokenbridge-data:/workspace"
@@ -449,7 +449,7 @@ services:
     image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/autonomous-auctioneer
     ports:
-      - "127.0.0.1:9372:8123"
+      - "127.0.0.1:9372:8547"
     volumes:
       - "././arb/config:/config"
     command:
