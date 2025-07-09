@@ -31,11 +31,13 @@ fi
 
 num_volumes=`docker volume ls --filter label=com.docker.compose.project=nitro-testnode -q | wc -l`
 
-if [[ $num_volumes -eq 0 ]]; then
-    force_init=true
-else
-    force_init=false
-fi
+# if [[ $num_volumes -eq 0 ]]; then
+#     force_init=true
+# else
+#     force_init=false
+# fi
+
+force_init=true
 
 run=true
 ci=false
