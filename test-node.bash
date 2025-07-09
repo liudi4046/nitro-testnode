@@ -37,7 +37,8 @@ num_volumes=`docker volume ls --filter label=com.docker.compose.project=nitro-te
 #     force_init=false
 # fi
 
-force_init=true
+force_init=false
+remove=false
 
 run=true
 ci=false
@@ -93,6 +94,10 @@ while [[ $# -gt 0 ]]; do
             force_init=true
             build_utils=true
             build_node_images=true
+            shift
+            ;;
+        --remove)
+            remove=true
             shift
             ;;
         --dev)
@@ -292,6 +297,7 @@ while [[ $# -gt 0 ]]; do
             echo --dev             build nitro and blockscout dockers from source instead of pulling them. Disables simple mode
             echo --dev-contracts   build scripts with local development version of contracts
             echo --init            remove all data, rebuild, deploy new rollup
+            echo --remove          remove all data
             echo --pos             l1 is a proof-of-stake chain \(using prysm for consensus\)
             echo --validate        heavy computation, validating all blocks in WASM
             echo --l3node          deploys an L3 node on top of the L2
@@ -423,8 +429,18 @@ if $build_node_images; then
     docker compose build --no-rm $NODES
 fi
 
+if $remove; then
+    echo == Removing old data..
+    docker compose down
+    leftoverContainers=`docker container ls -a --filter label=com.docker.compose.project=nitro-testnode -q | xargs echo`
+    if [ `echo $leftoverContainers | wc -w` -gt 0 ]; then
+        docker rm $leftoverContainers
+    fi
+    rm -rf arb;
+    exit 0
+fi
+
 if $force_init; then
-    rm -rf arb
     echo == Removing old data..
     docker compose down
     leftoverContainers=`docker container ls -a --filter label=com.docker.compose.project=nitro-testnode -q | xargs echo`
@@ -436,6 +452,7 @@ if $force_init; then
     if [ `echo $leftoverVolumes | wc -w` -gt 0 ]; then
         docker volume rm $leftoverVolumes
     fi
+    rm -rf arb
 
     echo == Generating l1 keys
     docker compose run scripts write-accounts
