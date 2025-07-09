@@ -584,7 +584,7 @@ function writeBidValidatorConfig(argv: any) {
     "bid-validator": {
       "auction-contract-address": argv.auctionContract,
       "redis-url": "redis://redis:6379",
-      "sequencer-endpoint": "http://sequencer:8547"
+      "sequencer-endpoint": "http://sequencer:8123"
     }
   }
   const bidValidatorConfigJSON = JSON.stringify(bidValidatorConfig)

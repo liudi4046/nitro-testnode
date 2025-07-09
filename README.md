@@ -86,7 +86,7 @@ Target branch for changes supporting unreleased Nitro features.
 
 ### Working with docker containers
 
-**sequencer** is the main docker to be used to access the nitro testchain. It's http and websocket interfaces are exposed at localhost ports 8547 and 8548 ports, respectively.
+**sequencer** is the main docker to be used to access the nitro testchain. It's http and websocket interfaces are exposed at localhost ports 8123 and 8548 ports, respectively.
 
 Stopping, restarting nodes can be done with docker-compose.
 
