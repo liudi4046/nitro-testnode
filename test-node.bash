@@ -436,7 +436,20 @@ if $remove; then
     if [ `echo $leftoverContainers | wc -w` -gt 0 ]; then
         docker rm $leftoverContainers
     fi
-    rm -rf arb;
+    echo "Removing arb directory"
+    # Loop until arb directory is successfully removed
+    while [ -d "arb" ]; do
+        echo "Attempting to remove arb directory..."
+        rm -rf arb
+        if [ -d "arb" ]; then
+            echo "Directory still exists, waiting 2 seconds before retry..."
+            sleep 2
+        else
+            echo "arb directory successfully removed"
+            break
+        fi
+    done
+    sleep 10
     exit 0
 fi
 
@@ -452,8 +465,22 @@ if $force_init; then
     if [ `echo $leftoverVolumes | wc -w` -gt 0 ]; then
         docker volume rm $leftoverVolumes
     fi
-    rm -rf arb
-
+    echo "Removing arb directory"
+    # Loop until arb directory is successfully removed
+    while [ -d "arb" ]; do
+        echo "Attempting to remove arb directory..."
+        rm -rf arb
+        PWD=$(pwd)
+        echo "PWD: $PWD"
+        if [ -d "arb" ]; then
+            echo "Directory still exists, waiting 2 seconds before retry..."
+            sleep 2
+        else
+            echo "arb directory successfully removed"
+            break
+        fi
+    done
+    sleep 10
     echo == Generating l1 keys
     docker compose run scripts write-accounts
     docker compose run --entrypoint sh geth -c "echo passphrase > /datadir/passphrase"
