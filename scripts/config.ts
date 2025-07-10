@@ -411,7 +411,8 @@ function writeL2ChainConfig(argv: any) {
             "DataAvailabilityCommittee": argv.anytrust,
             "InitialArbOSVersion": 32, // TODO For Timeboost, this still needs to be set to 31
             "InitialChainOwner": argv.l2owner,
-            "GenesisBlockNum": 0
+            "GenesisBlockNum": 0,
+            "MaxBlockGasLimit": 100000000
         }
     }
     const l2ChainConfigJSON = JSON.stringify(l2ChainConfig)
@@ -444,7 +445,8 @@ function writeL3ChainConfig(argv: any) {
             "DataAvailabilityCommittee": false,
             "InitialArbOSVersion": 32,
             "InitialChainOwner": argv.l2owner,
-            "GenesisBlockNum": 0
+            "GenesisBlockNum": 0,
+            "MaxBlockGasLimit": 100000000
         }
     }
     const l3ChainConfigJSON = JSON.stringify(l3ChainConfig)

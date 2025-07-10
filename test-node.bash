@@ -448,6 +448,8 @@ if $remove; then
             echo "arb directory successfully removed"
             break
         fi
+        mkdir -p arb
+        chmod 777 arb
     done
     sleep 10
     exit 0
@@ -480,6 +482,8 @@ if $force_init; then
             break
         fi
     done
+    mkdir -p arb
+    chmod 777 arb
     sleep 10
     echo == Generating l1 keys
     docker compose run scripts write-accounts
