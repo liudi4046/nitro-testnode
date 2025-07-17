@@ -166,7 +166,11 @@ services:
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
       - "tokenbridge-data:/tokenbridge-data"
+      - "./genesis.json:/config/genesis.json"
     command:
+      - --init.dev-init=false
+      - --init.empty=false
+      - --init.genesis-json-file=/config/genesis.json
       - --conf.file=/config/sequencer_config.json
       - --node.feed.output.enable
       - --node.feed.output.port=9642

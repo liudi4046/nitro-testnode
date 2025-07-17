@@ -280,6 +280,10 @@ while [[ $# -gt 0 ]]; do
             simple=false
             shift
             ;;
+        --stop)
+            docker compose down --remove-orphans; sleep 3;
+            exit 0;
+            ;;
         *)
             echo Usage: $0 \[OPTIONS..]
             echo        $0 script [SCRIPT-ARGS]
