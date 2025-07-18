@@ -31,11 +31,14 @@ fi
 
 num_volumes=`docker volume ls --filter label=com.docker.compose.project=nitro-testnode -q | wc -l`
 
-if [[ $num_volumes -eq 0 ]]; then
-    force_init=true
-else
-    force_init=false
-fi
+# if [[ $num_volumes -eq 0 ]]; then
+#     force_init=true
+# else
+#     force_init=false
+# fi
+
+force_init=false
+remove=false
 
 run=true
 ci=false
@@ -91,6 +94,10 @@ while [[ $# -gt 0 ]]; do
             force_init=true
             build_utils=true
             build_node_images=true
+            shift
+            ;;
+        --remove)
+            remove=true
             shift
             ;;
         --dev)
@@ -290,6 +297,7 @@ while [[ $# -gt 0 ]]; do
             echo --dev             build nitro and blockscout dockers from source instead of pulling them. Disables simple mode
             echo --dev-contracts   build scripts with local development version of contracts
             echo --init            remove all data, rebuild, deploy new rollup
+            echo --remove          remove all data
             echo --pos             l1 is a proof-of-stake chain \(using prysm for consensus\)
             echo --validate        heavy computation, validating all blocks in WASM
             echo --l3node          deploys an L3 node on top of the L2
@@ -421,6 +429,32 @@ if $build_node_images; then
     docker compose build --no-rm $NODES
 fi
 
+if $remove; then
+    echo == Removing old data..
+    docker compose down
+    leftoverContainers=`docker container ls -a --filter label=com.docker.compose.project=nitro-testnode -q | xargs echo`
+    if [ `echo $leftoverContainers | wc -w` -gt 0 ]; then
+        docker rm $leftoverContainers
+    fi
+    echo "Removing arb directory"
+    # Loop until arb directory is successfully removed
+    while [ -d "arb" ]; do
+        echo "Attempting to remove arb directory..."
+        rm -rf arb
+        if [ -d "arb" ]; then
+            echo "Directory still exists, waiting 2 seconds before retry..."
+            sleep 2
+        else
+            echo "arb directory successfully removed"
+            break
+        fi
+        mkdir -p arb
+        chmod 777 arb
+    done
+    sleep 10
+    exit 0
+fi
+
 if $force_init; then
     echo == Removing old data..
     docker compose down
@@ -433,7 +467,24 @@ if $force_init; then
     if [ `echo $leftoverVolumes | wc -w` -gt 0 ]; then
         docker volume rm $leftoverVolumes
     fi
-
+    echo "Removing arb directory"
+    # Loop until arb directory is successfully removed
+    while [ -d "arb" ]; do
+        echo "Attempting to remove arb directory..."
+        rm -rf arb
+        PWD=$(pwd)
+        echo "PWD: $PWD"
+        if [ -d "arb" ]; then
+            echo "Directory still exists, waiting 2 seconds before retry..."
+            sleep 2
+        else
+            echo "arb directory successfully removed"
+            break
+        fi
+    done
+    mkdir -p arb
+    chmod 777 arb
+    sleep 10
     echo == Generating l1 keys
     docker compose run scripts write-accounts
     docker compose run --entrypoint sh geth -c "echo passphrase > /datadir/passphrase"
