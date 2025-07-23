@@ -177,29 +177,17 @@ services:
       - --graphql.corsdomain=*
       - --execution.sequencer.max-block-speed=250ms
       - --execution.sequencer.max-tx-data-size=490000
-      - --node.batch-poster.max-size=512000 
-      # - --execution.sequencer.queue-size=500000
-      # - --execution.sequencer.queue-timeout=3000s
-      # - --execution.sequencer.nonce-cache-size=200000
+      - --node.batch-poster.max-size=512000
+
       - --execution.sequencer.nonce-failure-cache-size=200000
       - --execution.sequencer.nonce-failure-cache-expiry=300s
-      - --parent-chain.blob-client.beacon-url=http://prysm_beacon_chain:3500
-      - --node.batch-poster.post-4844-blobs
-      - --node.batch-poster.data-poster.post-4844-blobs
-      - --node.batch-poster.ignore-blob-price
 
-      # # - --execution.sequencer.enable-profiling=true
-      # - --node.batch-poster.data-poster.max-mempool-transactions=20000
-      # - --node.batch-poster.data-poster.max-queued-transactions=100000
-      # - --node.batch-poster.max-delay=50s
-      # - --node.batch-poster.poll-interval=5000ms
-      # - --node.batch-poster.wait-for-max-delay=false  
     depends_on:
       - geth
 
   sequencer_b:
     pid: host # allow debugging
-    image: nitro-node-dev-testnode 
+    image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
       - "127.0.0.1:8647:8547"
@@ -281,11 +269,11 @@ services:
       - "config:/config"
     command: 
       - --conf.file /config/poster_config.json
-      - --parent-chain.blob-client.beacon-url=http://prysm_beacon_chain:3500 # <--- 在这里加入
-      - --node.batch-poster.post-4844-blobs # <--- 在这里加入
-      - --node.batch-poster.data-poster.post-4844-blobs # <--- 在这里加入
-      - --node.batch-poster.ignore-blob-price # <--- 在这里加入
-      - --node.batch-poster.max-size=512000 # <--- 在这里加入
+      - --parent-chain.blob-client.beacon-url=http://prysm_beacon_chain:3500
+      - --node.batch-poster.post-4844-blobs
+      - --node.batch-poster.data-poster.post-4844-blobs
+      - --node.batch-poster.ignore-blob-price
+      - --node.batch-poster.max-size=512000
     depends_on:
       - geth
       - redis
