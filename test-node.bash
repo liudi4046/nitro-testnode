@@ -8,7 +8,7 @@ BLOCKSCOUT_VERSION=offchainlabs/blockscout:v1.1.0-0e716c8
 # nitro-contract workaround for testnode
 # 1. authorizing validator signer key since validator wallet is buggy
 #    - gas estimation sent from 0x0000 lead to balance and permission error
-DEFAULT_NITRO_CONTRACTS_VERSION="v3.1.0"
+DEFAULT_NITRO_CONTRACTS_VERSION="main"
 DEFAULT_TOKEN_BRIDGE_VERSION="v1.2.2"
 
 # Set default versions if not overriden by provided env vars
@@ -393,7 +393,7 @@ if $build_utils; then
   if [ "$ci" == true ]; then
     docker buildx bake --allow=fs=/tmp --file docker-compose.yaml --file docker-compose-ci-cache.json $LOCAL_BUILD_NODES
   else
-    UTILS_NOCACHE=""
+    UTILS_NOCACHE="--no-cache"
     if $force_build_utils; then
       UTILS_NOCACHE="--no-cache"
     fi
@@ -485,12 +485,19 @@ if $force_init; then
         docker compose run scripts --l2owner $l2ownerAddress  write-l2-chain-config
     fi
 
+    echo == Patching l2_chain_config.json with correct MaxDataSize
+    docker compose run --entrypoint sh scripts -c "jq '.arbitrum.MaxDataSize = 512000' /config/l2_chain_config.json > /config/l2_chain_config_temp.json && mv /config/l2_chain_config_temp.json /config/l2_chain_config.json"
+    
+
+    echo "== Verifying content of patched config file:"
+    docker compose run --entrypoint sh scripts -c "cat /config/l2_chain_config.json"
+
     sequenceraddress=`docker compose run scripts print-address --account sequencer | tail -n 1 | tr -d '\r\n'`
     l2ownerKey=`docker compose run scripts print-private-key --account l2owner | tail -n 1 | tr -d '\r\n'`
     wasmroot=`docker compose run --entrypoint sh sequencer -c "cat /home/user/target/machines/latest/module-root.txt"`
 
     echo == Deploying L2 chain
-    docker compose run -e PARENT_CHAIN_RPC="http://geth:8545" -e DEPLOYER_PRIVKEY=$l2ownerKey -e PARENT_CHAIN_ID=$l1chainid -e CHILD_CHAIN_NAME="arb-dev-test" -e MAX_DATA_SIZE=117964 -e OWNER_ADDRESS=$l2ownerAddress -e WASM_MODULE_ROOT=$wasmroot -e SEQUENCER_ADDRESS=$sequenceraddress -e AUTHORIZE_VALIDATORS=10 -e CHILD_CHAIN_CONFIG_PATH="/config/l2_chain_config.json" -e CHAIN_DEPLOYMENT_INFO="/config/deployment.json" -e CHILD_CHAIN_INFO="/config/deployed_chain_info.json" rollupcreator create-rollup-testnode
+    docker compose run -e PARENT_CHAIN_RPC="http://geth:8545" -e DEPLOYER_PRIVKEY=$l2ownerKey -e PARENT_CHAIN_ID=$l1chainid -e CHILD_CHAIN_NAME="arb-dev-test" -e MAX_DATA_SIZE=512000 -e OWNER_ADDRESS=$l2ownerAddress -e WASM_MODULE_ROOT=$wasmroot -e SEQUENCER_ADDRESS=$sequenceraddress -e AUTHORIZE_VALIDATORS=10 -e CHILD_CHAIN_CONFIG_PATH="/config/l2_chain_config.json" -e CHAIN_DEPLOYMENT_INFO="/config/deployment.json" -e CHILD_CHAIN_INFO="/config/deployed_chain_info.json" rollupcreator create-rollup-testnode
     if $l2timeboost; then
         docker compose run --entrypoint sh rollupcreator -c 'jq ".[] | .\"track-block-metadata-from\"=1 | [.]" /config/deployed_chain_info.json > /config/l2_chain_info.json'
     else

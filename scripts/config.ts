@@ -70,7 +70,7 @@ function writeGethGenesisConfig(argv: any) {
                 "arrowGlacierBlock": 0,
                 "grayGlacierBlock": 0,
                 "shanghaiTime": 0,
-                "cancunTime": 1706778826,
+                "cancunTime": 0,
                 "terminalTotalDifficulty": 0,
                 "terminalTotalDifficultyPassed": true,
                 "blobSchedule": {

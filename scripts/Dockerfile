@@ -1,5 +1,6 @@
 # Stage 1: Base build environment
 FROM node:20-bookworm-slim AS base
+RUN apt-get update && apt-get install -y jq
 WORKDIR /workspace
 COPY ./package.json ./yarn.lock ./
 RUN yarn
