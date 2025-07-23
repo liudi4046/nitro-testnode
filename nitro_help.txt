@@ -1,6 +1,0 @@
-Version: v3.6.8-d6c96a5, time: 2025-07-02T08:56:19-06:00
-Sample usage: /usr/local/bin/nitro [OPTIONS] 
-
-Options:
-  --help
-  --dev: Start a default L2-only dev chain
