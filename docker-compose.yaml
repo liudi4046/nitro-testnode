@@ -175,6 +175,13 @@ services:
       - --graphql.enable
       - --graphql.vhosts=*
       - --graphql.corsdomain=*
+      - --execution.sequencer.max-block-speed=250ms
+      - --execution.sequencer.max-tx-data-size=210000
+      - --node.batch-poster.max-size=512000
+
+      - --execution.sequencer.nonce-failure-cache-size=200000
+      - --execution.sequencer.nonce-failure-cache-expiry=300s
+
     depends_on:
       - geth
 
@@ -260,7 +267,13 @@ services:
       - "poster-data:/home/user/.arbitrum/local/nitro"
       - "l1keystore:/home/user/l1keystore"
       - "config:/config"
-    command: --conf.file /config/poster_config.json
+    command: 
+      - --conf.file /config/poster_config.json
+      - --parent-chain.blob-client.beacon-url=http://prysm_beacon_chain:3500
+      - --node.batch-poster.post-4844-blobs
+      - --node.batch-poster.data-poster.post-4844-blobs
+      - --node.batch-poster.ignore-blob-price
+      - --node.batch-poster.max-size=512000
     depends_on:
       - geth
       - redis
