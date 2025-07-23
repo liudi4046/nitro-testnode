@@ -155,7 +155,7 @@ services:
 
   sequencer:
     pid: host # allow debugging
-    image: nitro-node-dev:latest
+    image: nitro-node-dev-testnode
     entrypoint: /usr/local/bin/nitro
     ports:
       - "127.0.0.1:8547:8547"
@@ -176,7 +176,7 @@ services:
       - --graphql.vhosts=*
       - --graphql.corsdomain=*
       - --execution.sequencer.max-block-speed=250ms
-      - --execution.sequencer.max-tx-data-size=490000
+      - --execution.sequencer.max-tx-data-size=210000
       - --node.batch-poster.max-size=512000
 
       - --execution.sequencer.nonce-failure-cache-size=200000
